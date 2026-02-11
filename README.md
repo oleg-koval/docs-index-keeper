@@ -1,5 +1,11 @@
 # docs-index-keeper
 
+[![npm version](https://img.shields.io/npm/v/docs-index-keeper.svg)](https://www.npmjs.com/package/docs-index-keeper)
+[![npm downloads](https://img.shields.io/npm/dm/docs-index-keeper.svg)](https://www.npmjs.com/package/docs-index-keeper)
+[![CI](https://github.com/oleg-koval/docs-index-keeper/actions/workflows/ci.yml/badge.svg)](https://github.com/oleg-koval/docs-index-keeper/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node](https://img.shields.io/node/v/docs-index-keeper.svg)](https://nodejs.org)
+
 **Keep your docs index in sync automatically.** When you add or change Markdown files under `docs/`, a pre-commit hook (or CI step) updates the index table—no manual edits, no forgotten entries.
 
 - **Zero config for common setups:** `docs/README.md` index, exclude `archive/`, optional warning for root-level `.md`

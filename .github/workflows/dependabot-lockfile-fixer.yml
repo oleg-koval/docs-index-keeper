@@ -1,0 +1,41 @@
+# When Dependabot opens a PR, merge base into it and fix lockfile-only conflicts.
+# https://github.com/oleg-koval/dependabot-lockfile-fixer
+name: Dependabot Lockfile Fixer
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: dependabot-lockfile-fixer-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  fix-lockfiles:
+    if: >
+      github.actor == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node (corepack + packageManager detection)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fix lockfiles
+        uses: oleg-koval/dependabot-lockfile-fixer@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}

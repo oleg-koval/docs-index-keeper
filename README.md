@@ -1,5 +1,11 @@
 # docs-index-keeper
 
+[![npm version](https://img.shields.io/npm/v/docs-index-keeper.svg)](https://www.npmjs.com/package/docs-index-keeper)
+[![npm downloads](https://img.shields.io/npm/dm/docs-index-keeper.svg)](https://www.npmjs.com/package/docs-index-keeper)
+[![CI](https://github.com/oleg-koval/docs-index-keeper/actions/workflows/ci.yml/badge.svg)](https://github.com/oleg-koval/docs-index-keeper/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node](https://img.shields.io/node/v/docs-index-keeper.svg)](https://nodejs.org)
+
 **Keep your docs index in sync automatically.** When you add or change Markdown files under `docs/`, a pre-commit hook (or CI step) updates the index table—no manual edits, no forgotten entries.
 
 - **Zero config for common setups:** `docs/README.md` index, exclude `archive/`, optional warning for root-level `.md`
@@ -106,7 +112,7 @@ DOCS_INDEX_KEEPER_STAGED="docs/foo.md" npx docs-index-keeper check
 Run from the package root. Requires `git`, `gh` (logged in), and `npm`. Overrides: `PROJECT_DIR`, `REUSE_REMOTE_REPO=true`, `COMMIT_MSG="..."`. After push, CI performs the npm publish.
 
 - **Versioning:** Use [Conventional Commits](https://www.conventionalcommits.org/): `feat:` → minor, `fix:` → patch, `BREAKING CHANGE:` (or `feat!:` / `fix!:`) → major.
-- **Secrets:** In the repo’s GitHub Settings → Secrets and variables → Actions, add **NPM_TOKEN** (npm auth token with “Automation” type). `GITHUB_TOKEN` is provided by Actions.
+- **Secrets:** In the repo’s GitHub Settings → Secrets and variables → Actions, add **NPM_TOKEN** (npm token with **Read and write** for your packages). Paste the token with **no trailing newline or space**. Use `scripts/set-npm-token-secret.sh --from-browser` after creating a token at https://www.npmjs.com/settings/~/tokens (Granular). `GITHUB_TOKEN` is provided by Actions.
 
 **Publishing to GitHub Package Registry (instead of npm):** Use a scoped name in `package.json` (e.g. `@oleg-koval/docs-index-keeper`) and add `"publishConfig": { "registry": "https://npm.pkg.github.com" }`. In CI, set the secret to a GitHub PAT with `write:packages` and use it as `NPM_TOKEN` (semantic-release/npm uses `NPM_TOKEN` for any registry). Install from GitHub: `npm install @oleg-koval/docs-index-keeper` with `.npmrc`: `@oleg-koval:registry=https://npm.pkg.github.com`.
 

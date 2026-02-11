@@ -38,13 +38,19 @@ jobs:
         with:
           node-version: "20"
           cache: "npm"
-          registry-url: "https://registry.npmjs.org"
 
       - run: npm ci
       - run: npm run build
 
+      # Use .npmrc with trimmed token (avoids 401 from trailing newline in secret)
+      - name: Configure npm auth
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$(echo -n "$NPM_TOKEN" | tr -d '[:space:]')" > .npmrc
+          npm whoami --registry https://registry.npmjs.org/ || (echo "::error::NPM_TOKEN invalid or expired. Create a new token at https://www.npmjs.com/settings/~/tokens (Granular, Read and write) and set NPM_TOKEN secret with no extra spaces/newlines." && exit 1)
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Release
         run: npx semantic-release
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

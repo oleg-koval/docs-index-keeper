@@ -101,7 +101,11 @@ DOCS_INDEX_KEEPER_STAGED="docs/foo.md" npx docs-index-keeper check
 
 ## Releases (maintainers)
 
-**Publishing is fully automated in GitHub Actions.** Push a Conventional Commit to `main` → CI runs tests, then [semantic-release](https://semantic-release.gitbook.io/) determines the next SemVer version, updates `CHANGELOG.md`, publishes to npm, creates a GitHub release, and commits the release artifacts back to `main`.
+**Publishing is fully automated in GitHub Actions.**
+
+- Push a Conventional Commit to `main` for a stable release.
+- Push a Conventional Commit to `beta` for an installable npm pre-release published on the `beta` dist-tag.
+- Every push to `main` or `beta` first runs a release-readiness job that validates `NPM_TOKEN` and dry-runs `semantic-release` before the actual publish step runs.
 
 **One-shot: create repo, commit, push** (no local npm publish):
 
@@ -112,8 +116,10 @@ DOCS_INDEX_KEEPER_STAGED="docs/foo.md" npx docs-index-keeper check
 Run from the package root. Requires `git`, `gh` (logged in), and `npm`. Overrides: `PROJECT_DIR`, `REUSE_REMOTE_REPO=true`, `COMMIT_MSG="..."`. After push, CI performs the npm publish.
 
 - **Versioning:** Use [Conventional Commits](https://www.conventionalcommits.org/): `feat:` → minor, `fix:` → patch, `BREAKING CHANGE:` (or `feat!:` / `fix!:`) → major.
+- **Pre-releases:** The `beta` branch publishes versions like `1.2.0-beta.1`. Install with `npm install docs-index-keeper@beta`.
 - **Changelog:** `CHANGELOG.md` is generated and maintained by the release workflow. Do not edit it manually.
 - **Secrets:** In the repo’s GitHub Settings → Secrets and variables → Actions, add **NPM_TOKEN** (npm token with **Read and write** for your packages). Paste the token with **no trailing newline or space**. Use `scripts/set-npm-token-secret.sh --from-browser` after creating a token at https://www.npmjs.com/settings/~/tokens (Granular). `GITHUB_TOKEN` is provided by Actions.
+- **Local verification:** Run `npm run release:dry-run` to validate the semantic-release setup locally without publishing.
 
 **Publishing to GitHub Package Registry (instead of npm):** Use a scoped name in `package.json` (e.g. `@oleg-koval/docs-index-keeper`) and add `"publishConfig": { "registry": "https://npm.pkg.github.com" }`. In CI, set the secret to a GitHub PAT with `write:packages` and use it as `NPM_TOKEN` (semantic-release/npm uses `NPM_TOKEN` for any registry). Install from GitHub: `npm install @oleg-koval/docs-index-keeper` with `.npmrc`: `@oleg-koval:registry=https://npm.pkg.github.com`.
 

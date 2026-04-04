@@ -9,6 +9,7 @@
   },
   "files": [
     "dist",
+    "CHANGELOG.md",
     "README.md",
     "LICENSE"
   ],
@@ -53,12 +54,31 @@
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogFile": "CHANGELOG.md"
+        }
+      ],
       "@semantic-release/npm",
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "package.json",
+            "package-lock.json",
+            "CHANGELOG.md"
+          ],
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ],
       "@semantic-release/github"
     ]
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/github": "^12.0.5",
+    "@semantic-release/git": "^10.0.1",
     "@semantic-release/npm": "^13.1.4",
     "@types/node": "^22.10.0",
     "eslint": "^10.0.0",

@@ -8,8 +8,13 @@
     "docs-index-keeper": "dist/cli.js"
   },
   "files": [
+    ".cursor-plugin",
     "dist",
     "CHANGELOG.md",
+    "SKILL.md",
+    "skills",
+    "docs",
+    "examples",
     "README.md",
     "LICENSE"
   ],
@@ -38,7 +43,12 @@
     "docs-index",
     "doc-index",
     "runbook",
-    "knowledge-base"
+    "knowledge-base",
+    "skill",
+    "ai-agent",
+    "codex",
+    "claude",
+    "cursor"
   ],
   "license": "MIT",
   "author": "Oleg Koval <oleg-koval@users.noreply.github.com> (https://github.com/oleg-koval)",

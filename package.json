@@ -8,7 +8,13 @@
     "docs-index-keeper": "dist/cli.js"
   },
   "files": [
+    ".cursor-plugin",
     "dist",
+    "CHANGELOG.md",
+    "SKILL.md",
+    "skills",
+    "docs",
+    "examples",
     "README.md",
     "LICENSE"
   ],
@@ -17,7 +23,8 @@
     "prepare": "npm run build",
     "test": "vitest run",
     "lint": "eslint src --ext .ts",
-    "check": "npm run build && npm run test"
+    "check": "npm run build && npm run test",
+    "release:dry-run": "semantic-release --dry-run --no-ci"
   },
   "engines": {
     "node": ">=18"
@@ -36,7 +43,12 @@
     "docs-index",
     "doc-index",
     "runbook",
-    "knowledge-base"
+    "knowledge-base",
+    "skill",
+    "ai-agent",
+    "codex",
+    "claude",
+    "cursor"
   ],
   "license": "MIT",
   "author": "Oleg Koval <oleg-koval@users.noreply.github.com> (https://github.com/oleg-koval)",
@@ -49,16 +61,42 @@
     "url": "https://github.com/oleg-koval/docs-index-keeper/issues"
   },
   "release": {
-    "branches": ["main"],
+    "branches": [
+      "main",
+      {
+        "name": "beta",
+        "channel": "beta",
+        "prerelease": "beta"
+      }
+    ],
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogFile": "CHANGELOG.md"
+        }
+      ],
       "@semantic-release/npm",
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "package.json",
+            "package-lock.json",
+            "CHANGELOG.md"
+          ],
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ],
       "@semantic-release/github"
     ]
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/github": "^12.0.5",
+    "@semantic-release/git": "^10.0.1",
     "@semantic-release/npm": "^13.1.4",
     "@types/node": "^25.2.3",
     "eslint": "^10.0.0",

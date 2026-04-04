@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, beta]
   pull_request:
-    branches: [main]
+    branches: [main, beta]
 
 permissions:
   contents: write
@@ -27,9 +27,44 @@ jobs:
       - run: npm run build
       - run: npm test
 
-  release:
+  release-readiness:
     needs: test
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Validate npm auth
+        run: |
+          if [ -z "$NPM_TOKEN" ]; then
+            echo "::error::NPM_TOKEN secret is not configured."
+            exit 1
+          fi
+
+          echo "//registry.npmjs.org/:_authToken=$(echo -n "$NPM_TOKEN" | tr -d '[:space:]')" > .npmrc
+          npm whoami --registry https://registry.npmjs.org/ || (echo "::error::NPM_TOKEN invalid or expired. Create a new token at https://www.npmjs.com/settings/~/tokens (Granular, Read and write) and set NPM_TOKEN secret with no extra spaces/newlines." && exit 1)
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Validate release configuration
+        run: npm run release:dry-run
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  release:
+    needs: [test, release-readiness]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

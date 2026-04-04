@@ -1,0 +1,17 @@
+{
+  "name": "docs-index-keeper",
+  "short_name": "index-keeper",
+  "description": "Keep docs indexes in sync automatically.",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f2ea",
+  "theme_color": "#f4f2ea"
+}

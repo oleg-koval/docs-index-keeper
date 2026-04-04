@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://oleg-koval.github.io/docs-index-keeper/sitemap.xml

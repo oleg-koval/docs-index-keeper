@@ -1,0 +1,29 @@
+# Require docs/README.md index to be up to date when docs change.
+# If this fails, run: npx docs-index-keeper update (after staging your .md files) or npx docs-index-keeper add docs/<file>.md
+name: Docs index
+
+on:
+  push:
+    branches: [main]
+    paths: ['docs/**']
+  pull_request:
+    branches: [main]
+    paths: ['docs/**']
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check docs index is up to date
+        run: npx docs-index-keeper check

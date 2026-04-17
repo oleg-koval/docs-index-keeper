@@ -1,6 +1,6 @@
 {
   "name": "docs-index-keeper",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Keep your docs/README.md index in sync automatically. When you add or change Markdown files under docs/, a pre-commit hook or CI step updates the index table—no manual edits, no forgotten entries.",
   "type": "module",
   "main": "dist/index.js",

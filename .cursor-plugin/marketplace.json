@@ -1,0 +1,12 @@
+{
+  "plugins": [
+    {
+      "name": "docs-index-keeper",
+      "source": ".",
+      "description": "Keep Markdown docs indexes in sync with staged docs changes using a portable agent skill and npm CLI.",
+      "repository": "https://github.com/oleg-koval/docs-index-keeper",
+      "homepage": "https://github.com/oleg-koval/docs-index-keeper",
+      "logo": "docs/icon.svg"
+    }
+  ]
+}

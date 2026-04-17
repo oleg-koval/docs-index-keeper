@@ -48,7 +48,7 @@ Commands:
 - `docs-index-keeper init`
 - `docs-index-keeper update`
 - `docs-index-keeper check`
-- `docs-index-keeper add <path>`
+- `docs-index-keeper add <path|mask...>`
 
 ## Preferred workflow
 
@@ -77,10 +77,10 @@ npx docs-index-keeper check
 npx docs-index-keeper update
 ```
 
-6. To add one doc manually:
+6. To add docs manually:
 
 ```bash
-npx docs-index-keeper add docs/my-doc.md
+npx docs-index-keeper add docs/my-doc.md docs/plans/*.md
 ```
 
 ## Config

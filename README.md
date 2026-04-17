@@ -111,6 +111,8 @@ Details: [docs/agent-platforms.md](./docs/agent-platforms.md)
 
 More examples: [examples/skill-usage.md](./examples/skill-usage.md)
 
+Marketplace submission checklist: [docs/marketplace-submissions.md](./docs/marketplace-submissions.md)
+
 ---
 
 ## Commands
@@ -120,7 +122,34 @@ More examples: [examples/skill-usage.md](./examples/skill-usage.md)
 | `docs-index-keeper init` | Add a pre-commit hook (Husky or `.git/hooks/pre-commit`) that runs `update` and stages the index file |
 | `docs-index-keeper update` | Update the index from **staged** `.md` files (used by the hook) |
 | `docs-index-keeper check` | Dry run; exit 1 if the index would change (use in CI to require an up-to-date index) |
-| `docs-index-keeper add <path>` | Add a single file to the index (e.g. `docs-index-keeper add docs/runbook.md`) |
+| `docs-index-keeper add <path|mask...>` | Add one or many files to the index (e.g. `docs-index-keeper add docs/runbook.md docs/plans/*.md`) |
+
+---
+
+## Add One, Many, or by Mask
+
+`add` supports direct file paths and glob-like masks in one command.
+
+```bash
+# one file
+docs-index-keeper add docs/runbook.md
+
+# many files
+docs-index-keeper add docs/runbook.md docs/guides/oncall.md
+
+# mask (quote masks so your shell does not expand unexpectedly)
+docs-index-keeper add "docs/plans/*.md"
+
+# mixed
+docs-index-keeper add docs/README.md "docs/plans/*.md"
+```
+
+Notes:
+
+- only Markdown files are added
+- excluded paths are skipped based on config
+- already-indexed files are skipped
+- the command prints both added and skipped entries
 
 ---
 

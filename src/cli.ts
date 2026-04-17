@@ -1,8 +1,9 @@
 #!/usr/bin/env node
-import { existsSync, readFileSync, writeFileSync, chmodSync } from 'fs'
+import { existsSync, readFileSync, writeFileSync, chmodSync, statSync } from 'fs'
 import { join } from 'path'
 import { loadConfig } from './config.js'
 import { update, check, getFirstHeading, parseTable, insertRows } from './index.js'
+import { resolveAddInputs } from './add-inputs.js'
 
 const root = process.cwd()
 
@@ -14,7 +15,7 @@ Usage:
   docs-index-keeper init     Add pre-commit hook (husky or plain git)
   docs-index-keeper update   Update index from staged .md files (for pre-commit)
   docs-index-keeper check   Dry run; exit 1 if index would change (for CI)
-  docs-index-keeper add <path>  Add a single file to the index
+  docs-index-keeper add <path|mask...>  Add one or many files to the index
 
 Config: package.json "docsIndexKeeper" or .docs-index-keeper.json
 
@@ -91,9 +92,9 @@ async function main(): Promise<void> {
       break
     }
     case 'add': {
-      const pathArg = args[1]
-      if (!pathArg) {
-        console.error('[docs-index-keeper] add requires a path. Example: docs-index-keeper add docs/my-doc.md')
+      const pathArgs = args.slice(1)
+      if (!pathArgs.length) {
+        console.error('[docs-index-keeper] add requires one or more paths/masks. Example: docs-index-keeper add docs/my-doc.md docs/plans/*.md')
         process.exit(1)
       }
       const indexPath = join(root, config.indexFile)
@@ -101,29 +102,63 @@ async function main(): Promise<void> {
         console.error('[docs-index-keeper] Index file not found:', config.indexFile)
         process.exit(1)
       }
-      const rel = pathArg.startsWith(config.docsDir + '/') ? pathArg.replace(new RegExp(`^${config.docsDir}/`), '') : pathArg
-      if (config.exclude.some((e) => rel === e || rel.startsWith(e))) {
-        console.error('[docs-index-keeper] Path is excluded:', pathArg)
+      const resolvedPaths = resolveAddInputs(root, pathArgs)
+      if (!resolvedPaths.length) {
+        console.error('[docs-index-keeper] No files matched the provided paths/masks')
         process.exit(1)
       }
-      const fullPath = join(root, pathArg)
-      if (!existsSync(fullPath)) {
-        console.error('[docs-index-keeper] File not found:', pathArg)
-        process.exit(1)
-      }
+
       let readme = readFileSync(indexPath, 'utf-8')
       const existing = parseTable(readme)
       const existingPaths = new Set(existing.map((r) => r.path))
-      if (existingPaths.has(rel)) {
-        console.log('[docs-index-keeper] Already in index:', rel)
+      const toAdd = []
+      const skipped: string[] = []
+
+      for (const pathArg of resolvedPaths) {
+        const fullPath = join(root, pathArg)
+        if (!existsSync(fullPath)) {
+          skipped.push(`${pathArg} (not found)`)
+          continue
+        }
+        if (!statSync(fullPath).isFile()) {
+          skipped.push(`${pathArg} (not a file)`)
+          continue
+        }
+        if (!pathArg.endsWith('.md')) {
+          skipped.push(`${pathArg} (not a Markdown file)`)
+          continue
+        }
+
+        const rel = pathArg.startsWith(config.docsDir + '/') ? pathArg.replace(new RegExp(`^${config.docsDir}/`), '') : pathArg
+        if (config.exclude.some((e) => rel === e || rel.startsWith(e))) {
+          skipped.push(`${pathArg} (excluded)`)
+          continue
+        }
+        if (existingPaths.has(rel)) {
+          skipped.push(`${pathArg} (already indexed)`)
+          continue
+        }
+
+        const title = rel.replace(/\.md$/, '')
+        const purpose = getFirstHeading(root, pathArg) || title.replace(/-/g, ' ')
+        toAdd.push({ path: rel, title, purpose })
+        existingPaths.add(rel)
+      }
+
+      if (!toAdd.length) {
+        console.log('[docs-index-keeper] No new files were added')
+        if (skipped.length) {
+          console.log('[docs-index-keeper] Skipped:', skipped.join(', '))
+        }
         break
       }
-      const title = rel.replace(/\.md$/, '')
-      const purpose = getFirstHeading(root, pathArg) || title.replace(/-/g, ' ')
-      const toAdd = [{ path: rel, title, purpose }]
+
       readme = insertRows(readme, toAdd)
       writeFileSync(indexPath, readme)
-      console.log('[docs-index-keeper] Added to', config.indexFile + ':', rel)
+      console.log('[docs-index-keeper] Added to', config.indexFile + ':', toAdd.map((row) => row.path).join(', '))
+      if (skipped.length) {
+        console.log('[docs-index-keeper] Skipped:', skipped.join(', '))
+      }
       break
     }
     default:

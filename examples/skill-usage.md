@@ -16,6 +16,12 @@ Install docs-index-keeper in this repository, configure it with the default docs
 Use docs-index-keeper to update the docs index for the currently staged Markdown files, then run the relevant verification commands.
 ```
 
+### Add multiple files at once
+
+```text
+Use docs-index-keeper add to index multiple docs at once. Use docs/runbooks/oncall.md and all markdown files matching docs/plans/*.md, then show what was added and what was skipped.
+```
+
 ### Add CI enforcement
 
 ```text
@@ -34,6 +40,12 @@ This repo uses docs-index-keeper. Please check whether docs/README.md has a vali
 
 ```text
 Use the docs-index-keeper workflow in this repository to add docs/runbooks/oncall.md into the docs index and explain any assumptions briefly.
+```
+
+### Bulk add request with mask
+
+```text
+Please run docs-index-keeper add with a quoted mask for docs/plans/*.md and include any skipped files in your report.
 ```
 
 ## Cursor

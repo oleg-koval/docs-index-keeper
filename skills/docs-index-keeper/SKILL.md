@@ -47,10 +47,10 @@ npx docs-index-keeper check
 npx docs-index-keeper update
 ```
 
-6. To add one file manually, run:
+6. To add files manually, run:
 
 ```bash
-npx docs-index-keeper add docs/my-doc.md
+npx docs-index-keeper add docs/my-doc.md docs/plans/*.md
 ```
 
 ## Notes

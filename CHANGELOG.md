@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/oleg-koval/docs-index-keeper/compare/v1.2.0...v1.3.0) (2026-04-17)
+
+
+### Features
+
+* support bulk add masks and marketplace prep ([#36](https://github.com/oleg-koval/docs-index-keeper/issues/36)) ([98b8165](https://github.com/oleg-koval/docs-index-keeper/commit/98b81657be4c83f28bf88548ca761f75d5cc53ee))
+
 # [1.2.0](https://github.com/oleg-koval/docs-index-keeper/compare/v1.1.0...v1.2.0) (2026-04-04)
 
 
